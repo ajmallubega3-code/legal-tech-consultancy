@@ -1,0 +1,261 @@
+"use client";
+
+import { useState } from "react";
+
+export default function LegalTechConsultancyPortal() {
+  const [serviceType, setServiceType] = useState("corporate-governance");
+  const [accepted, setAccepted] = useState(false);
+  const [clientData, setClientData] = useState({ name: "", email: "", entityType: "Private Limited Company", details: "" });
+  const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!accepted) {
+      alert("Mandatory Acceptance: You must agree to the Terms of Contract under Ugandan Law to proceed.");
+      return;
+    }
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/consultation/initiate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...clientData, serviceType }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setSubmitted(true);
+      } else {
+        alert(data.error || "Failed to register request.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("An error occurred during submission.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div style={{
+      backgroundColor: "#0a192f", // Professional Dark Blue Background
+      color: "#ffffff",
+      minHeight: "100vh",
+      fontFamily: "Arial, sans-serif",
+      position: "relative",
+      overflowX: "hidden"
+    }}>
+      {/* Ugandan Flag Accent Bar */}
+      <div style={{ display: "flex", height: "8px", width: "100%" }}>
+        <div style={{ backgroundColor: "#000000", flex: 1 }}></div>
+        <div style={{ backgroundColor: "#fcd116", flex: 1 }}></div>
+        <div style={{ backgroundColor: "#d9381e", flex: 1 }}></div>
+      </div>
+
+      {/* Hero Header with Lady of Justice Theme */}
+      <header style={{
+        padding: "50px 20px",
+        textAlign: "center",
+        borderBottom: "1px solid rgba(252, 209, 22, 0.3)",
+        background: "linear-gradient(rgba(10, 25, 47, 0.85), rgba(10, 25, 47, 0.95)), url('https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=1200&q=80') center/cover"
+      }}>
+        <div style={{ maxWidth: "900px", margin: "0 auto" }}>
+          <div style={{ fontSize: "14px", letterSpacing: "2px", color: "#fcd116", textTransform: "uppercase", marginBottom: "10px", fontWeight: "bold" }}>
+            Independent Professional Practice • Republic of Uganda
+          </div>
+          <h1 style={{ fontSize: "36px", fontWeight: "bold", marginBottom: "15px", color: "#ffffff" }}>
+            Legal Tech Consultancy and Drafting Services
+          </h1>
+          <p style={{ fontSize: "15px", color: "#cbd5e1", lineHeight: "1.6", maxWidth: "750px", margin: "0 auto" }}>
+            Providing elite independent virtual In-House Counsel services, corporate governance, ESG compliance frameworks, intellectual property protection, international commercial contracts, company incorporations, share re-registrations, debentures, and corporate restructuring.
+          </p>
+          
+          {/* Mandatory Legal Disclaimer Box */}
+          <div style={{
+            marginTop: "25px",
+            background: "rgba(217, 56, 30, 0.15)",
+            border: "1px solid #d9381e",
+            padding: "15px",
+            borderRadius: "4px",
+            fontSize: "12px",
+            color: "#fecaca",
+            textAlign: "left"
+          }}>
+            <strong>STATUTORY DISCLAIMER & JURISDICTIONAL NOTICE:</strong> This independent platform operates strictly under the laws of the Republic of Uganda. <strong>We do not provide representation in courts of law.</strong> Services are exclusively limited to corporate entities, NGOs, and organizations for risk management, legal compliance, advisory, and professional document drafting.
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content Form Section */}
+      <main style={{ maxWidth: "900px", margin: "40px auto", padding: "0 20px 60px" }}>
+        {!submitted ? (
+          <form onSubmit={handleSubmit} style={{
+            background: "#112240",
+            border: "1px solid rgba(252, 209, 22, 0.2)",
+            padding: "40px",
+            borderRadius: "8px",
+            boxShadow: "0 10px 30px rgba(0,0,0,0.5)"
+          }}>
+            <h2 style={{ fontSize: "22px", marginBottom: "25px", color: "#fcd116", borderBottom: "1px solid #334155", paddingBottom: "10px" }}>
+              Request Professional Legal Drafting & Advisory Service
+            </h2>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px", marginBottom: "20px" }}>
+              <div>
+                <label style={{ display: "block", fontSize: "13px", fontWeight: "bold", marginBottom: "8px", color: "#e2e8f0" }}>Full Name / Representative Name</label>
+                <input
+                  type="text"
+                  required
+                  value={clientData.name}
+                  onChange={(e) => setClientData({ ...clientData, name: e.target.value })}
+                  style={{ width: "100%", padding: "12px", background: "#0a192f", border: "1px solid #334155", color: "#fff", borderRadius: "4px" }}
+                  placeholder="e.g., John Doe, Esq."
+                />
+              </div>
+              <div>
+                <label style={{ display: "block", fontSize: "13px", fontWeight: "bold", marginBottom: "8px", color: "#e2e8f0" }}>Corporate Email Address</label>
+                <input
+                  type="email"
+                  required
+                  value={clientData.email}
+                  onChange={(e) => setClientData({ ...clientData, email: e.target.value })}
+                  style={{ width: "100%", padding: "12px", background: "#0a192f", border: "1px solid #334155", color: "#fff", borderRadius: "4px" }}
+                  placeholder="name@company.co.ug"
+                />
+              </div>
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px", marginBottom: "20px" }}>
+              <div>
+                <label style={{ display: "block", fontSize: "13px", fontWeight: "bold", marginBottom: "8px", color: "#e2e8f0" }}>Entity Classification</label>
+                <select
+                  value={clientData.entityType}
+                  onChange={(e) => setClientData({ ...clientData, entityType: e.target.value })}
+                  style={{ width: "100%", padding: "12px", background: "#0a192f", border: "1px solid #334155", color: "#fff", borderRadius: "4px" }}
+                >
+                  <option value="Private Limited Company">Private Limited Company</option>
+                  <option value="Public Limited Company">Public Limited Company</option>
+                  <option value="Company Limited by Guarantee">Company Limited by Guarantee</option>
+                  <option value="Unlimited Company">Unlimited Company</option>
+                  <option value="NGO / Non-Profit Organization">NGO / Non-Profit Organization</option>
+                  <option value="Foreign Corporate Branch">Foreign Corporate Branch</option>
+                </select>
+              </div>
+              <div>
+                <label style={{ display: "block", fontSize: "13px", fontWeight: "bold", marginBottom: "8px", color: "#e2e8f0" }}>Specialized Legal Service Area</label>
+                <select
+                  value={serviceType}
+                  onChange={(e) => setServiceType(e.target.value)}
+                  style={{ width: "100%", padding: "12px", background: "#0a192f", border: "1px solid #334155", color: "#fff", borderRadius: "4px" }}
+                >
+                  <option value="corporate-governance">Corporate Governance & ESG Compliant Policies</option>
+                  <option value="inhouse-counsel">In-House Counsel Retainer Services</option>
+                  <option value="ip-protection">Intellectual Property Protection (Trademarks/Patents)</option>
+                  <option value="international-contracts">Drafting of International Commercial Contracts</option>
+                  <option value="incorporation">Company Incorporation (Memorandum & Articles)</option>
+                  <option value="share-transfer">Share Transfers & Beneficial Owners Documentation</option>
+                  <option value="re-registration">Re-registration (Private/Public Conversions & Guarantees)</option>
+                  <option value="debentures">Company Debentures & Charges Registration</option>
+                  <option value="winding-up">Company Voluntary Winding Up & Insolvency Advisory</option>
+                </select>
+              </div>
+            </div>
+
+            <div style={{ marginBottom: "20px" }}>
+              <label style={{ display: "block", fontSize: "13px", fontWeight: "bold", marginBottom: "8px", color: "#e2e8f0" }}>Specific Instructions / Business Scope</label>
+              <textarea
+                rows="4"
+                required
+                value={clientData.details}
+                onChange={(e) => setClientData({ ...clientData, details: e.target.value })}
+                style={{ width: "100%", padding: "12px", background: "#0a192f", border: "1px solid #334155", color: "#fff", borderRadius: "4px" }}
+                placeholder="Provide details regarding your organizational structure, drafting specifications, or compliance requirements..."
+              />
+            </div>
+
+            {/* Mandatory Retainer & Agreement Box */}
+            <div style={{
+              background: "#0a192f",
+              border: "1px solid #334155",
+              padding: "20px",
+              borderRadius: "4px",
+              maxHeight: "180px",
+              overflowY: "scroll",
+              fontSize: "12px",
+              color: "#cbd5e1",
+              marginBottom: "20px",
+              lineHeight: "1.5"
+            }}>
+              <strong style={{ color: "#fcd116" }}>BINDING RETAINER AND CONSULTANCY TERMS (UGANDA JURISDICTION):</strong>
+              <p>1. <strong>Governing Law:</strong> All advisory services, compliance structures, and legal drafting are governed strictly by the laws of the Republic of Uganda, including the Companies Act, the Insolvency Act, the Contracts Act, and related regulatory statutes.</p>
+              <p>2. <strong>No Court Representation:</strong> The client acknowledges that this platform and its associated independent services provide advisory, risk management, compliance, and drafting services only and do not undertake litigation or court representation.</p>
+              <p>3. <strong>Condition Precedent:</strong> Formal release of drafted instruments and advisory opinions occurs strictly upon full verification of the professional consultation and drafting fee deposited into the designated firm account.</p>
+            </div>
+
+            <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "30px" }}>
+              <input
+                type="checkbox"
+                id="consent-check"
+                checked={accepted}
+                onChange={(e) => setAccepted(e.target.checked)}
+                style={{ width: "20px", height: "20px", cursor: "pointer" }}
+              />
+              <label htmlFor="consent-check" style={{ fontSize: "13px", color: "#e2e8f0", cursor: "pointer", fontWeight: "bold" }}>
+                I have read, understood, and unconditionally agree to the binding retainer terms under Ugandan law.
+              </label>
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading || !accepted}
+              style={{
+                width: "100%",
+                padding: "14px",
+                background: accepted ? "#fcd116" : "#475569",
+                color: accepted ? "#0a192f" : "#94a3b8",
+                fontWeight: "bold",
+                border: "none",
+                borderRadius: "4px",
+                cursor: accepted ? "pointer" : "not-allowed",
+                fontSize: "15px",
+                textTransform: "uppercase",
+                letterSpacing: "1px"
+              }}
+            >
+              {loading ? "Processing Engagement..." : "Execute Contract & Access Account Details"}
+            </button>
+          </form>
+        ) : (
+          <div style={{
+            background: "#112240",
+            border: "2px solid #fcd116",
+            padding: "40px",
+            borderRadius: "8px",
+            textAlign: "center"
+          }}>
+            <h2 style={{ color: "#fcd116", fontSize: "24px", marginBottom: "15px" }}>Engagement & Retainer Executed Successfully</h2>
+            <p style={{ color: "#e2e8f0", fontSize: "14px", lineHeight: "1.6", marginBottom: "25px" }}>
+              Your application for <strong>{serviceType.replace("-", " ").toUpperCase()}</strong> has been successfully registered under Ugandan jurisdiction. To initiate document drafting or advisory sessions, please remit the professional fee.
+            </p>
+            
+            <div style={{ background: "#0a192f", border: "1px solid #334155", padding: "20px", borderRadius: "4px", textAlign: "left", maxWidth: "500px", margin: "0 auto 25px", fontSize: "13px" }}>
+              <p style={{ marginBottom: "8px" }}><strong>Designated Bank:</strong> Commercial Bank (Uganda Regulation)</p>
+              <p style={{ marginBottom: "8px" }}><strong>Account Name:</strong> Legal Tech Consultancy and Drafting Services</p>
+              <p style={{ marginBottom: "0" }}><strong>Verification Protocol:</strong> Attach your transaction identifier to confirm remittance.</p>
+            </div>
+
+            <p style={{ fontSize: "12px", color: "#94a3b8", fontStyle: "italic" }}>
+              Drafting work commences instantaneously upon payment confirmation by our compliance desk.
+            </p>
+          </div>
+        )}
+      </main>
+
+      {/* Footer Branding */}
+      <footer style={{ textAlign: "center", padding: "20px", borderTop: "1px solid #1e293b", fontSize: "12px", color: "#64748b" }}>
+        © {new Date().getFullYear()} Legal Tech Consultancy and Drafting Services. Strictly Governed by the Laws of the Republic of Uganda. Independent Practice.
+      </footer>
+    </div>
+  );
+}
